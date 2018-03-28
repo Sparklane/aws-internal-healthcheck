@@ -1,0 +1,30 @@
+{
+  "name": "aws-internal-healthcheck",
+  "version": "0.1.0",
+  "description": "Perform healthchecks on private IP or private FQDN (Private Route53). Healthchecks status are pushed to Cloudwatch custom metrics.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sparklane/aws-internal-healthcheck.git"
+  },
+  "keywords": [
+    "aws",
+    "internal",
+    "healthcheck",
+    "route53",
+    "cloudwatch"
+  ],
+  "author": "devops@sparklane.fr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sparklane/aws-internal-healthcheck/issues"
+  },
+  "homepage": "https://github.com/Sparklane/aws-internal-healthcheck#readme",
+  "dependencies": {
+    "aws-sdk": "^2.215.1",
+    "follow-redirects": "^1.4.1"
+  }
+}
