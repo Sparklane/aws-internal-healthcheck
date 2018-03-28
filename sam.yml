@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description:  Perform healthchecks on private IP or private FQDN (Private Route53). Healthchecks status are pushed to Cloudwatch custom metrics.
+Resources:
+  AwsInternalHealthcheck:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: '.'
+      Description: >-
+        Perform healthchecks on private IP or private FQDN (Private Route53). 
+        Healthchecks status are pushed to Cloudwatch custom metrics.
+      Timeout: 10
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'cloudwatch:PutMetricData'
+              Resource: '*'
+      Environment:
+        Variables:
+          PROTOCOL: <enter value here>
+          HOSTNAME: <enter value here>
+          PORT: <enter value here>
+          STRING_MATCHING: <enter value here>
+          INVERT_HEALTHCHECK_STATUS: <enter value here>
+          METRIC_NAMESPACE: <enter value here>
