@@ -22,6 +22,7 @@ Once this healthcheck metrics are in Cloudwatch, it's up to you to:
 |`PROTOCOL` | `http` | `http` or `https` |
 |`HOSTNAME` | `localhost` | Hostname or IP address |
 |`PORT` | `80` | Port to test |
+|`URL_PATH` | `/` | Path to test | 
 |`STRING_MATCHING` | _undefined_ | Will return OK if the string is contained in the response's body otherwise |
 |`INVERT_HEALTHCHECK_STATUS` | `false` | this will invert healthcheck result (ok will become ko) |
 |`METRIC_NAME` | `MyService` | Name of the Cloudwatch metrics |

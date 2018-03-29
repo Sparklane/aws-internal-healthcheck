@@ -1,21 +1,21 @@
 'use strict';
 
-const https = require('https');
-const http = require('follow-redirects').http;
 const AWS = require('aws-sdk');
 const cloudwatch = new AWS.CloudWatch({apiVersion: '2013-02-22', region: 'eu-west-1'});
 
 var conf = {
     protocol : process.env.PROTOCOL || 'http',
     host: process.env.HOSTNAME || 'localhost',
-    port: process.env.PORT || '80',
+    port: process.env.PORT || ((process.env.PROTOCOL === 'https')?'443':'80'),
     path: process.env.URL_PATH || '',
     stringMatching: process.env.STRING_MATCHING,
     invertHealthCheckStatus: process.env.INVERT_HEALTHCHECK_STATUS || false,
     metricName : process.env.METRIC_NAME || 'MyService',
     metricNameSpace : process.env.METRIC_NAMESPACE || 'HealthCheck'
 }
+
 var url = `${conf.protocol}://${conf.host}:${conf.port}${conf.path}`
+const http = conf.protocol === 'https' ? require('follow-redirects').https : require('follow-redirects').http
 
 exports.handler = (event, context, callback) => {
     
@@ -64,9 +64,9 @@ var ProcessStatus = (statusOK, statusCode, err, cb) => {
         ],
         Namespace: conf.metricNameSpace,
     }
-    cloudwatch.putMetricData(metrics, (err, data) => {
-        if (err) {
-            cb(err, data)
+    cloudwatch.putMetricData(metrics, (errcw, data) => {
+        if (errcw) {
+            cb(errcw, data)
         }
         console.log(data)
         let res = `Healthcheck ${isOK ? 'OK': 'KO'} : ${statusCode || ''} ${err || ''}`
