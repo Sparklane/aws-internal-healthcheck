@@ -8,20 +8,35 @@ Parameters:
     AllowedValues: 
       - http
       - https
+    Description: 'Protocol of the URL to test (http or https). Default: http'
   Hostname:
     Type: String
+    Description: 'Hostname or IP of the URL to test. Default: localhost'
   Port:
     Type: Number
+    Description: 'Port of URL to test. Default: 80 for http, 443 for https'
   UrlPath:
     Type: String
+    Description: 'Path of the URL to test. Default: no path'
   StringMatching:
     Type: String
+    Description: '(Optional) String to search in the response body. If found the healcheck will succeed.'
   InvertHealtcheckStatus:
     Type: String
+    Description: '(Optional) Set to true if you want to invert the healthcheck result'
   MetricName:
     Type: String
+    Description: 'Name of the Cloudwatch metrics. Default: MyService'
   MetricNamespace:
     Type: String
+    Description: 'Namespace of the Cloudwatch Metric. Default: HealthCheck'
+  Cron: 
+    Type: String
+    Description: 'Cron expression (example : "0/5 * * * ? *" : run healthchecks every 5 minutes )'
+  SecurityGroupIds:
+    Type: List<String>
+  SubnetIds:
+    Type: List<String>
 
 Resources:
   AwsInternalHealthcheck:
@@ -35,6 +50,9 @@ Resources:
       Timeout: 10
       Policies:
         - CloudWatchPutMetricPolicy: {}
+      VpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref SubnetIds
       Environment:
         Variables:
           PROTOCOL: 
@@ -53,3 +71,13 @@ Resources:
             Ref: MetricName
           METRIC_NAMESPACE: 
             Ref: MetricNamespace
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule:
+              'Fn::Join':
+                - ''
+                - - 'cron('
+                  - !Ref Cron
+                  - ')'
