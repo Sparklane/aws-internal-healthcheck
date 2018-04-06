@@ -9,9 +9,10 @@ var conf = {
     port: process.env.PORT || ((process.env.PROTOCOL === 'https')?'443':'80'),
     path: process.env.URL_PATH || '',
     stringMatching: process.env.STRING_MATCHING,
-    invertHealthCheckStatus: process.env.INVERT_HEALTHCHECK_STATUS || false,
+    invertHealthCheckStatus: process.env.INVERT_HEALTHCHECK_STATUS === 'true' || false,
     metricName : process.env.METRIC_NAME || 'MyService',
-    metricNameSpace : process.env.METRIC_NAMESPACE || 'HealthCheck'
+    metricNameSpace : process.env.METRIC_NAMESPACE || 'HealthCheck',
+    timeout: process.env.TIMEOUT || 10
 }
 
 var url = `${conf.protocol}://${conf.host}:${conf.port}${conf.path}`
@@ -20,8 +21,7 @@ const http = conf.protocol === 'https' ? require('follow-redirects').https : req
 exports.handler = (event, context, callback) => {
     
     console.log(`Checking ${url}`)
-
-    http.get(url, res => {
+    var req = http.get(url, res => {
 
         if (conf.stringMatching) {
             let body = ''
@@ -42,8 +42,14 @@ exports.handler = (event, context, callback) => {
                 ProcessStatus (false, res.statusCode, new Error(`${res.statusMessage}`), callback)
             }
         }
-    }).on('error', e => {
+    })
+    req.on('error', e => {
         ProcessStatus (false, null, e, callback)
+    })
+    req.on('socket',function(socket){
+        socket.setTimeout(conf.timeout * 1000 - 500,function(){
+            req.abort();
+        })
     })
 };
 

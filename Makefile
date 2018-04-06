@@ -1,10 +1,11 @@
 run:
 	@docker run --rm -v $(PWD):/var/task \
-		-e PORT=8080 \
-		-e HOSTNAME=localhost \
-		-e STRING_MATCHING=html \
+		-e PORT=3000 \
+		-e HOSTNAME=prometheus.prod.sparklane\
 		-e METRIC_NAME=TestHealthCheck \
+		-e INVERT_HEALTHCHECK_STATUS=false \
 		-e METRIC_NAMESPACE=HealthCheck \
+		-e TIMEOUT=5 \
 		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
 		-e AWS_REGION=$(AWS_REGION) \

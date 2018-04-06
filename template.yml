@@ -8,12 +8,14 @@ Parameters:
     AllowedValues: 
       - http
       - https
+    Default: http
     Description: 'Protocol of the URL to test (http or https). Default: http'
   Hostname:
     Type: String
     Description: 'Hostname or IP of the URL to test. Default: localhost'
   Port:
     Type: Number
+    Default: 80
     Description: 'Port of URL to test. Default: 80 for http, 443 for https'
   UrlPath:
     Type: String
@@ -23,20 +25,28 @@ Parameters:
     Description: '(Optional) String to search in the response body. If found the healcheck will succeed.'
   InvertHealtcheckStatus:
     Type: String
+    Default: false
     Description: '(Optional) Set to true if you want to invert the healthcheck result'
   MetricName:
     Type: String
+    Default: MyService
     Description: 'Name of the Cloudwatch metrics. Default: MyService'
   MetricNamespace:
     Type: String
+    Default: HealthCheck
     Description: 'Namespace of the Cloudwatch Metric. Default: HealthCheck'
   Cron: 
     Type: String
+    Default: 0/5 * * * ? *
     Description: 'Cron expression (example : "0/5 * * * ? *" : run healthchecks every 5 minutes )'
   SecurityGroupIds:
     Type: List<String>
   SubnetIds:
     Type: List<String>
+  Timeout:
+    Type: Number
+    Default: 10
+    Description: 'Timeout in Seconds'
 
 Resources:
   AwsInternalHealthcheck:
@@ -47,9 +57,10 @@ Resources:
       Description: >-
         Perform healthchecks on private IP or private FQDN (Private Route53). 
         Healthchecks status are pushed to Cloudwatch custom metrics.
-      Timeout: 10
+      Timeout: 30
       Policies:
         - CloudWatchPutMetricPolicy: {}
+        - VPCAccessPolicy: {}
       VpcConfig:
         SecurityGroupIds: !Ref SecurityGroupIds
         SubnetIds: !Ref SubnetIds
@@ -67,10 +78,12 @@ Resources:
             Ref: StringMatching
           INVERT_HEALTHCHECK_STATUS: 
             Ref: InvertHealtcheckStatus
-          METRIC_Name: 
+          METRIC_NAME: 
             Ref: MetricName
           METRIC_NAMESPACE: 
             Ref: MetricNamespace
+          TIMEOUT:
+            Ref: Timeout
       Events:
         Timer:
           Type: Schedule
