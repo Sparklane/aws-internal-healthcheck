@@ -53,7 +53,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Description: >-
         Perform healthchecks on private IP or private FQDN (Private Route53). 
         Healthchecks status are pushed to Cloudwatch custom metrics.
