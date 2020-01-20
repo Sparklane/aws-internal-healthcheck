@@ -22,6 +22,7 @@ Parameters:
     Description: 'Path of the URL to test. Default: no path'
   StringMatching:
     Type: String
+    Default: ''
     Description: '(Optional) String to search in the response body. If found the healthcheck will succeed.'
   InvertHealtcheckStatus:
     Type: String
