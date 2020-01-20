@@ -23,6 +23,7 @@ Parameters:
   StringMatching:
     Type: String
     Description: '(Optional) String to search in the response body. If found the healcheck will succeed.'
+    Description: '(Optional) String to search in the response body. If found the healthcheck will succeed.'
   InvertHealtcheckStatus:
     Type: String
     Default: false
